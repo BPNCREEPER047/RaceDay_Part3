@@ -1,0 +1,102 @@
+name: RaceDay CI/CD
+
+on:
+  push:
+    branches: [ main, part2, part3 ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # ── Job 1: Build & Test the API ──────────────────────────────────────────────
+  api:
+    name: API – Build & Unit Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore API dependencies
+        run: dotnet restore RaceDayAPI/RaceDayAPI.csproj
+
+      - name: Build API
+        run: dotnet build RaceDayAPI/RaceDayAPI.csproj --no-restore -c Release
+
+      - name: Restore test dependencies
+        run: dotnet restore RaceDayAPI.Tests/RaceDayAPI.Tests.csproj
+
+      - name: Build tests
+        run: dotnet build RaceDayAPI.Tests/RaceDayAPI.Tests.csproj --no-restore -c Release
+
+      - name: Run unit tests
+        run: dotnet test RaceDayAPI.Tests/RaceDayAPI.Tests.csproj --no-build -c Release --verbosity normal
+
+      - name: Verify API project structure
+        run: |
+          echo "=== Verifying API structure ==="
+          test -f RaceDayAPI/Program.cs             && echo "✅ Program.cs"
+          test -f RaceDayAPI/RaceDayAPI.csproj      && echo "✅ RaceDayAPI.csproj"
+          test -d RaceDayAPI/Controllers             && echo "✅ Controllers/"
+          test -d RaceDayAPI/Models                  && echo "✅ Models/"
+          test -d RaceDayAPI/DTOs                    && echo "✅ DTOs/"
+          test -d RaceDayAPI/Data                    && echo "✅ Data/"
+          test -d RaceDayAPI/Migrations              && echo "✅ Migrations/"
+          test -d RaceDayAPI/Middleware              && echo "✅ Middleware/"
+          test -f RaceDayAPI/docs/raceday_database.sql && echo "✅ SQL script in /docs"
+          echo "✅ API structure verified"
+
+  # ── Job 2: Build the MVC ─────────────────────────────────────────────────────
+  mvc:
+    name: MVC – Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore MVC dependencies
+        run: dotnet restore RaceDay.MVC/RaceDay.MVC.csproj
+
+      - name: Build MVC
+        run: dotnet build RaceDay.MVC/RaceDay.MVC.csproj --no-restore -c Release
+
+      - name: Publish MVC
+        run: dotnet publish RaceDay.MVC/RaceDay.MVC.csproj --no-restore -c Release -o ./mvc-publish
+
+      - name: Verify MVC project structure
+        run: |
+          echo "=== Verifying MVC structure ==="
+          test -f RaceDay.MVC/Program.cs                  && echo "✅ Program.cs"
+          test -f RaceDay.MVC/RaceDay.MVC.csproj          && echo "✅ RaceDay.MVC.csproj"
+          test -f Dockerfile                              && echo "✅ Dockerfile"
+          test -d RaceDay.MVC/Controllers                 && echo "✅ Controllers/"
+          test -d RaceDay.MVC/Views                       && echo "✅ Views/"
+          test -d RaceDay.MVC/Services                    && echo "✅ Services/"
+          test -d RaceDay.MVC/wwwroot                     && echo "✅ wwwroot/"
+          echo "✅ MVC structure verified"
+
+  # ── Job 3: Docker build ──────────────────────────────────────────────────────
+  docker:
+    name: Docker – Build Image
+    runs-on: ubuntu-latest
+    needs: [ api, mvc ]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t raceday-mvc:ci -f Dockerfile .
+
+      - name: Verify Docker image
+        run: docker images raceday-mvc:ci

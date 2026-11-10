@@ -1,0 +1,65 @@
+@model CreateResultViewModel
+@{
+    ViewData["Title"] = "Capture Result";
+    var ev = ViewBag.Event as EventDto;
+    var enrolments = ViewBag.Enrolments as List<EnrolmentDto> ?? new();
+}
+
+<div class="container py-4" style="max-width:580px;">
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Events" asp-action="Dashboard">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-action="EventResults" asp-route-eventId="@ev?.EventID">Results</a></li>
+            <li class="breadcrumb-item active">Capture</li>
+        </ol>
+    </nav>
+
+    <h2 class="mb-1">Capture result</h2>
+    <p class="text-muted mb-4">@ev?.EventName</p>
+
+    @if (!enrolments.Any())
+    {
+        <div class="alert alert-info">All enrolled participants already have results recorded.</div>
+    }
+    else
+    {
+        <div class="rd-form-card">
+            <form asp-action="Capture" asp-route-eventId="@ev?.EventID" method="post">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                <div class="mb-3">
+                    <label asp-for="EnrolmentID" class="form-label fw-semibold">Participant *</label>
+                    <select asp-for="EnrolmentID" class="form-select"
+                            asp-items="@(new SelectList(enrolments, "EnrolmentID", "ParticipantName"))">
+                        <option value="">— Select participant —</option>
+                    </select>
+                    <span asp-validation-for="EnrolmentID" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="FinishTime" class="form-label fw-semibold">Finish time *</label>
+                    <input asp-for="FinishTime" class="form-control" placeholder="e.g. 1:23:45 or 45:21" />
+                    <span asp-validation-for="FinishTime" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Position" class="form-label fw-semibold">Finishing position</label>
+                    <input asp-for="Position" type="number" min="1" class="form-control" placeholder="e.g. 47" />
+                    <small class="text-muted">Out of how many total finishers? (Optional)</small>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Notes" class="form-label fw-semibold">Notes</label>
+                    <input asp-for="Notes" class="form-control" placeholder="e.g. 47th out of 312 finishers" />
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn rd-btn-primary px-4">
+                        <i class="bi bi-check-lg me-1"></i>Save result
+                    </button>
+                    <a asp-action="EventResults" asp-route-eventId="@ev?.EventID" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    }
+</div>

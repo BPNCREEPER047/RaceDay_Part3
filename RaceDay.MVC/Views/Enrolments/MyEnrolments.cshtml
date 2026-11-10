@@ -1,0 +1,53 @@
+@model List<EnrolmentDto>
+@{ ViewData["Title"] = "My Events"; }
+
+<div class="container py-4">
+    <div class="rd-section-header">
+        <h2>My Events</h2>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-search me-1"></i>Browse more events
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="rd-empty">
+            <i class="bi bi-clipboard-x"></i>
+            <h4>No events yet</h4>
+            <p>Browse upcoming events and enrol to get started.</p>
+            <a asp-controller="Home" asp-action="Index" class="btn rd-btn-primary mt-2">Find an event</a>
+        </div>
+    }
+    else
+    {
+        <div class="row g-3">
+            @foreach (var e in Model.OrderByDescending(x => x.EnrolledAt))
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="rd-event-card p-3">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="rd-status rd-status-@e.Status.ToLower()">@e.Status</span>
+                            <small class="text-muted">@e.EnrolledAt.ToString("dd MMM")</small>
+                        </div>
+                        <h6 class="fw-bold mb-1">@e.EventName</h6>
+                        <div class="text-muted small mb-3">
+                            <i class="bi bi-tag me-1"></i>@e.CategoryName
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a asp-controller="Events" asp-action="Details" asp-route-id="@e.EventID"
+                               class="btn btn-sm btn-outline-secondary flex-fill">View event</a>
+                            @if (e.Status != "Cancelled")
+                            {
+                                <form asp-action="Cancel" method="post"
+                                      onsubmit="return confirm('Cancel your enrolment for @e.EventName?')">
+                                    <input type="hidden" name="id" value="@e.EnrolmentID" />
+                                    <button class="btn btn-sm btn-outline-danger">Cancel</button>
+                                </form>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

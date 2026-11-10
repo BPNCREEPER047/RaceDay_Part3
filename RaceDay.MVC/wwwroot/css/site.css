@@ -1,0 +1,381 @@
+/* ── RaceDay Design System ───────────────────────────────────────────────── */
+:root {
+    --rd-black:      #0d0d0d;
+    --rd-charcoal:   #1a1a2e;
+    --rd-accent:     #e63946;
+    --rd-accent-dk:  #c1121f;
+    --rd-gold:       #f4a261;
+    --rd-green:      #2a9d8f;
+    --rd-bg:         #f8f9fa;
+    --rd-surface:    #ffffff;
+    --rd-border:     #e9ecef;
+    --rd-muted:      #6c757d;
+    --rd-text:       #212529;
+}
+
+/* ── Typography ─────────────────────────────────────────────────────────── */
+body {
+    font-family: 'Barlow', sans-serif;
+    background: var(--rd-bg);
+    color: var(--rd-text);
+    line-height: 1.6;
+}
+
+h1, h2, h3, .rd-brand, .rd-display {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+/* ── Navbar ─────────────────────────────────────────────────────────────── */
+.rd-navbar {
+    background: var(--rd-charcoal);
+    border-bottom: 3px solid var(--rd-accent);
+    padding: 0.75rem 0;
+}
+
+.rd-navbar .nav-link {
+    color: rgba(255,255,255,0.80) !important;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: color 0.15s;
+    padding: 0.5rem 0.9rem;
+}
+
+.rd-navbar .nav-link:hover,
+.rd-navbar .nav-link.active {
+    color: #fff !important;
+}
+
+.rd-brand {
+    color: #fff !important;
+    font-size: 1.6rem;
+    text-decoration: none;
+}
+
+.rd-brand i { color: var(--rd-accent); }
+
+.rd-role-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 20px;
+    margin-left: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.badge-org  { background: var(--rd-gold); color: #000; }
+.badge-part { background: var(--rd-green); color: #fff; }
+
+.rd-user-pill {
+    color: rgba(255,255,255,0.90) !important;
+    font-weight: 600;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────────── */
+.rd-btn-primary {
+    background: var(--rd-accent);
+    color: #fff;
+    border: none;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    transition: background 0.15s, transform 0.1s;
+}
+
+.rd-btn-primary:hover {
+    background: var(--rd-accent-dk);
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+/* ── Hero ────────────────────────────────────────────────────────────────── */
+.rd-hero {
+    background: linear-gradient(135deg, var(--rd-charcoal) 0%, #16213e 60%, #0f3460 100%);
+    color: #fff;
+    padding: 5rem 0 4rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.rd-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 40px,
+        rgba(230,57,70,0.04) 40px,
+        rgba(230,57,70,0.04) 80px
+    );
+}
+
+.rd-hero-title {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 800;
+    line-height: 1;
+    position: relative;
+}
+
+.rd-hero-title .accent { color: var(--rd-accent); }
+
+.rd-hero p {
+    font-size: 1.15rem;
+    color: rgba(255,255,255,0.75);
+    max-width: 540px;
+}
+
+/* ── Filter bar ──────────────────────────────────────────────────────────── */
+.rd-filter-bar {
+    background: var(--rd-surface);
+    border-bottom: 1px solid var(--rd-border);
+    padding: 0.75rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.rd-filter-btn {
+    border: 1.5px solid var(--rd-border);
+    background: transparent;
+    color: var(--rd-muted);
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 5px 14px;
+    border-radius: 20px;
+    transition: all 0.15s;
+}
+
+.rd-filter-btn:hover,
+.rd-filter-btn.active {
+    background: var(--rd-accent);
+    border-color: var(--rd-accent);
+    color: #fff;
+}
+
+/* ── Event Cards ─────────────────────────────────────────────────────────── */
+.rd-event-card {
+    background: var(--rd-surface);
+    border: 1px solid var(--rd-border);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.15s, box-shadow 0.15s;
+    height: 100%;
+}
+
+.rd-event-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+}
+
+.rd-event-banner {
+    height: 160px;
+    object-fit: cover;
+    width: 100%;
+    background: linear-gradient(135deg, var(--rd-charcoal), #2d3561);
+}
+
+.rd-event-banner-placeholder {
+    height: 160px;
+    background: linear-gradient(135deg, var(--rd-charcoal) 0%, #2d3561 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255,255,255,0.3);
+    font-size: 3rem;
+}
+
+.rd-event-type-badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 3px 10px;
+    border-radius: 20px;
+}
+
+.rd-type-run   { background: rgba(230,57,70,0.12);  color: var(--rd-accent); }
+.rd-type-cycle { background: rgba(42,157,143,0.12); color: var(--rd-green); }
+.rd-type-walk  { background: rgba(244,162,97,0.15); color: #d4631a; }
+
+.rd-event-meta {
+    font-size: 0.82rem;
+    color: var(--rd-muted);
+}
+
+.rd-event-meta i { width: 16px; }
+
+/* ── Status badges ───────────────────────────────────────────────────────── */
+.rd-status {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 3px 10px;
+    border-radius: 20px;
+}
+
+.rd-status-confirmed, .rd-status-registered {
+    background: rgba(42,157,143,0.15);
+    color: #1a7a70;
+}
+
+.rd-status-pending {
+    background: rgba(244,162,97,0.2);
+    color: #c46a1e;
+}
+
+.rd-status-cancelled {
+    background: rgba(220,53,69,0.12);
+    color: #dc3545;
+}
+
+/* ── Dashboard stats ─────────────────────────────────────────────────────── */
+.rd-stat-card {
+    background: var(--rd-surface);
+    border: 1px solid var(--rd-border);
+    border-radius: 10px;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.rd-stat-card .stat-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: var(--rd-charcoal);
+    line-height: 1;
+}
+
+.rd-stat-card .stat-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--rd-muted);
+    margin-top: 4px;
+}
+
+/* ── Tables ──────────────────────────────────────────────────────────────── */
+.rd-table {
+    background: var(--rd-surface);
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--rd-border);
+}
+
+.rd-table thead {
+    background: var(--rd-charcoal);
+    color: #fff;
+}
+
+.rd-table thead th {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    border: none;
+    padding: 0.9rem 1rem;
+}
+
+.rd-table tbody td {
+    padding: 0.85rem 1rem;
+    vertical-align: middle;
+    border-color: var(--rd-border);
+}
+
+/* ── Forms ───────────────────────────────────────────────────────────────── */
+.rd-form-card {
+    background: var(--rd-surface);
+    border: 1px solid var(--rd-border);
+    border-radius: 12px;
+    padding: 2rem;
+}
+
+.rd-form-card .form-label {
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: var(--rd-charcoal);
+}
+
+/* ── Auth pages ──────────────────────────────────────────────────────────── */
+.rd-auth-page {
+    min-height: 85vh;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(135deg, var(--rd-charcoal) 0%, #16213e 100%);
+}
+
+.rd-auth-card {
+    background: var(--rd-surface);
+    border-radius: 16px;
+    padding: 2.5rem;
+    max-width: 440px;
+    width: 100%;
+    margin: 0 auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.rd-auth-card h2 {
+    font-size: 2rem;
+}
+
+/* ── Section headers ─────────────────────────────────────────────────────── */
+.rd-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--rd-border);
+}
+
+.rd-section-header h2 {
+    font-size: 1.8rem;
+    margin: 0;
+    color: var(--rd-charcoal);
+}
+
+/* ── Empty state ─────────────────────────────────────────────────────────── */
+.rd-empty {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--rd-muted);
+}
+
+.rd-empty i { font-size: 3.5rem; opacity: 0.3; display: block; margin-bottom: 1rem; }
+
+/* ── Results page ────────────────────────────────────────────────────────── */
+.rd-result-row {
+    background: var(--rd-surface);
+    border: 1px solid var(--rd-border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.75rem;
+}
+
+.rd-position {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--rd-accent);
+    min-width: 60px;
+}
+
+/* ── Footer ──────────────────────────────────────────────────────────────── */
+.rd-footer {
+    background: var(--rd-charcoal);
+    color: rgba(255,255,255,0.6);
+    padding: 1.5rem 0;
+    font-size: 0.85rem;
+}
+
+.rd-footer .rd-brand {
+    font-size: 1.1rem;
+}
+
+/* ── Utilities ───────────────────────────────────────────────────────────── */
+.rd-divider { border-top: 2px solid var(--rd-accent); width: 48px; margin: 1rem 0; }

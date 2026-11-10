@@ -1,0 +1,67 @@
+@model List<EnrolmentDto>
+@{
+    ViewData["Title"] = "Event Enrolments";
+    var ev = ViewBag.Event as EventDto;
+}
+
+<div class="container py-4">
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Dashboard">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Events" asp-action="Details" asp-route-id="@ev?.EventID">@ev?.EventName</a></li>
+            <li class="breadcrumb-item active">Enrolments</li>
+        </ol>
+    </nav>
+
+    <div class="rd-section-header">
+        <div>
+            <h2>Enrolments</h2>
+            <p class="text-muted mb-0">@ev?.EventName &mdash; @ev?.EventDate.ToString("dd MMM yyyy")</p>
+        </div>
+        <a asp-controller="Results" asp-action="Capture" asp-route-eventId="@ev?.EventID"
+           class="btn rd-btn-primary">
+            <i class="bi bi-trophy me-1"></i>Capture results
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="rd-empty">
+            <i class="bi bi-people"></i>
+            <h4>No enrolments yet</h4>
+            <p>Participants can enrol once you share the event link.</p>
+        </div>
+    }
+    else
+    {
+        <div class="mb-3 text-muted small">@Model.Count participant@(Model.Count == 1 ? "" : "s") enrolled</div>
+        <div class="table-responsive rd-table">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Participant</th>
+                        <th>Category</th>
+                        <th>Enrolled</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{int i = 1;}
+                    @foreach (var e in Model.OrderBy(x => x.EnrolledAt))
+                    {
+                        <tr>
+                            <td class="text-muted">@(i++)</td>
+                            <td><strong>@e.ParticipantName</strong></td>
+                            <td>@e.CategoryName</td>
+                            <td class="text-nowrap">@e.EnrolledAt.ToString("dd MMM yyyy HH:mm")</td>
+                            <td>
+                                <span class="rd-status rd-status-@e.Status.ToLower()">@e.Status</span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

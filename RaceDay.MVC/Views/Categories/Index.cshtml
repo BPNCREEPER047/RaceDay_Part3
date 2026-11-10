@@ -1,0 +1,69 @@
+@model List<CategoryDto>
+@{ ViewData["Title"] = "Categories"; }
+
+<div class="container py-4">
+    <div class="rd-section-header">
+        <h2>Event Categories</h2>
+    </div>
+
+    <!-- Add form -->
+    <div class="rd-form-card mb-4" style="max-width:520px;">
+        <h5 class="fw-bold mb-3">Add new category</h5>
+        <form asp-action="Create" method="post">
+            <div class="row g-2">
+                <div class="col-sm-6">
+                    <input type="text" name="CategoryName" class="form-control" placeholder="Category name *" required />
+                </div>
+                <div class="col-sm-6">
+                    <input type="text" name="Description" class="form-control" placeholder="Description (optional)" />
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn rd-btn-primary">
+                        <i class="bi bi-plus me-1"></i>Add category
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- List -->
+    @if (!Model.Any())
+    {
+        <div class="rd-empty">
+            <i class="bi bi-tags"></i>
+            <h4>No categories yet</h4>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive rd-table">
+            <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th style="width:80px;"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var c in Model)
+                    {
+                        <tr>
+                            <td><strong>@c.CategoryName</strong></td>
+                            <td class="text-muted">@c.Description</td>
+                            <td>
+                                <form asp-action="Delete" method="post"
+                                      onsubmit="return confirm('Delete category @c.CategoryName?')">
+                                    <input type="hidden" name="id" value="@c.CategoryID" />
+                                    <button class="btn btn-sm btn-outline-danger">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

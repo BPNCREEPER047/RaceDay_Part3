@@ -1,0 +1,109 @@
+@model EventDto
+@{ ViewData["Title"] = Model.EventName; }
+
+<div class="container py-4">
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Events</a></li>
+            <li class="breadcrumb-item active">@Model.EventName</li>
+        </ol>
+    </nav>
+
+    <div class="row g-4">
+        <!-- Left: image + enrol -->
+        <div class="col-lg-4">
+            @if (!string.IsNullOrEmpty(Model.BannerImageUrl))
+            {
+                <img src="@Model.BannerImageUrl" class="img-fluid rounded-3 mb-3 w-100" alt="@Model.EventName" style="max-height:280px;object-fit:cover;" />
+            }
+            else
+            {
+                <div class="rd-event-banner-placeholder rounded-3 mb-3">
+                    <i class="bi bi-@(Model.EventType == "cycle" ? "bicycle" : Model.EventType == "walk" ? "person" : "person-walking")"></i>
+                </div>
+            }
+
+            @if (ViewBag.IsLoggedIn == true && ViewBag.CurrentRole == "Participant")
+            {
+                <form asp-controller="Enrolments" asp-action="Enrol" method="post">
+                    <input type="hidden" name="eventId" value="@Model.EventID" />
+                    <button class="btn rd-btn-primary w-100 py-2 fw-bold mb-2">
+                        <i class="bi bi-clipboard-plus me-2"></i>Enrol in this event
+                    </button>
+                </form>
+            }
+            else if (ViewBag.IsLoggedIn != true)
+            {
+                <a asp-controller="Auth" asp-action="Login" class="btn rd-btn-primary w-100 py-2 fw-bold mb-2">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>Log in to enrol
+                </a>
+            }
+
+            @if (ViewBag.IsLoggedIn == true && ViewBag.CurrentRole == "Organiser" && Model.OrganiserID == ViewBag.CurrentUserId)
+            {
+                <div class="d-flex gap-2 mt-2">
+                    <a asp-controller="Events" asp-action="Edit" asp-route-id="@Model.EventID"
+                       class="btn btn-outline-secondary flex-fill btn-sm">
+                        <i class="bi bi-pencil me-1"></i>Edit
+                    </a>
+                    <form asp-controller="Events" asp-action="Delete" method="post" class="flex-fill"
+                          onsubmit="return confirm('Delete this event?')">
+                        <input type="hidden" name="id" value="@Model.EventID" />
+                        <button class="btn btn-outline-danger w-100 btn-sm">
+                            <i class="bi bi-trash me-1"></i>Delete
+                        </button>
+                    </form>
+                </div>
+            }
+        </div>
+
+        <!-- Right: details -->
+        <div class="col-lg-8">
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                <span class="rd-event-type-badge rd-type-@Model.EventType.ToLower()">@Model.EventType</span>
+                @if (!string.IsNullOrEmpty(Model.CategoryName))
+                {
+                    <span class="badge bg-secondary">@Model.CategoryName</span>
+                }
+            </div>
+
+            <h1 class="mb-3" style="font-size:2.2rem;">@Model.EventName</h1>
+
+            @if (!string.IsNullOrEmpty(Model.Description))
+            {
+                <p class="text-muted mb-4">@Model.Description</p>
+            }
+
+            <div class="row g-3 mb-4">
+                <div class="col-sm-6">
+                    <div class="rd-form-card p-3">
+                        <div class="text-muted small mb-1"><i class="bi bi-calendar3 me-1"></i>Date</div>
+                        <strong>@Model.EventDate.ToString("dddd, dd MMM yyyy")</strong>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="rd-form-card p-3">
+                        <div class="text-muted small mb-1"><i class="bi bi-geo-alt me-1"></i>Location</div>
+                        <strong>@Model.Location</strong>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="rd-form-card p-3">
+                        <div class="text-muted small mb-1"><i class="bi bi-signpost me-1"></i>Distance</div>
+                        <strong>@Model.Distance km</strong>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="rd-form-card p-3">
+                        <div class="text-muted small mb-1"><i class="bi bi-people me-1"></i>Max participants</div>
+                        <strong>@Model.MaxParticipants</strong>
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-muted small">
+                <i class="bi bi-person-badge me-1"></i>Organised by <strong>@Model.OrganiserName</strong>
+            </p>
+        </div>
+    </div>
+</div>

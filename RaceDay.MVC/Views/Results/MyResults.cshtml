@@ -1,0 +1,55 @@
+@model List<ResultDto>
+@{ ViewData["Title"] = "My Results"; }
+
+<div class="container py-4">
+    <div class="rd-section-header">
+        <h2>My Race Results</h2>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="rd-empty">
+            <i class="bi bi-trophy"></i>
+            <h4>No results yet</h4>
+            <p>Your finish times will appear here after events you've participated in are concluded.</p>
+            <a asp-controller="Enrolments" asp-action="MyEnrolments" class="btn rd-btn-primary mt-2">
+                View my events
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="mb-3">
+            <small class="text-muted">@Model.Count result@(Model.Count == 1 ? "" : "s") across all events</small>
+        </div>
+
+        @foreach (var r in Model.OrderByDescending(x => x.EventDate))
+        {
+            <div class="rd-result-row d-flex align-items-center gap-3">
+                <div class="rd-position">
+                    @(r.Position.HasValue ? $"#{r.Position}" : "—")
+                </div>
+                <div class="flex-grow-1">
+                    <div class="fw-bold">@r.EventName</div>
+                    <div class="text-muted small">
+                        @r.EventDate?.ToString("dd MMM yyyy")
+                        @if (!string.IsNullOrEmpty(r.CategoryName))
+                        {
+                            <span class="ms-2"><i class="bi bi-tag me-1"></i>@r.CategoryName</span>
+                        }
+                    </div>
+                    @if (!string.IsNullOrEmpty(r.Notes))
+                    {
+                        <div class="text-muted small fst-italic mt-1">@r.Notes</div>
+                    }
+                </div>
+                <div class="text-end">
+                    <div class="fw-bold fs-5 text-danger" style="font-family:'Barlow Condensed',sans-serif;">
+                        @r.FinishTime
+                    </div>
+                    <small class="text-muted">finish time</small>
+                </div>
+            </div>
+        }
+    }
+</div>

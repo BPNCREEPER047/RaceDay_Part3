@@ -1,0 +1,111 @@
+@model OrganiserDashboardViewModel
+@{ ViewData["Title"] = "Organiser Dashboard"; }
+
+<div class="container py-4">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h1 class="mb-1">Dashboard</h1>
+            <p class="text-muted mb-0">Welcome back, <strong>@ViewBag.CurrentName</strong></p>
+        </div>
+        <a asp-action="Create" class="btn rd-btn-primary">
+            <i class="bi bi-plus-circle me-2"></i>New Event
+        </a>
+    </div>
+
+    <!-- Stats -->
+    <div class="row g-3 mb-4">
+        <div class="col-sm-4">
+            <div class="rd-stat-card">
+                <div class="stat-num">@Model.TotalEvents</div>
+                <div class="stat-label">Total events</div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="rd-stat-card">
+                <div class="stat-num">@Model.TotalEnrolments</div>
+                <div class="stat-label">Total enrolments</div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="rd-stat-card">
+                <div class="stat-num">@Model.UpcomingEvents.Count</div>
+                <div class="stat-label">Upcoming events</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Events table -->
+    <div class="rd-section-header">
+        <h2>Your Events</h2>
+        <a asp-action="Create" class="btn btn-sm btn-outline-danger">
+            <i class="bi bi-plus me-1"></i>Create
+        </a>
+    </div>
+
+    @if (!Model.Events.Any())
+    {
+        <div class="rd-empty">
+            <i class="bi bi-calendar-plus"></i>
+            <h4>No events yet</h4>
+            <p>Create your first event to get started.</p>
+            <a asp-action="Create" class="btn rd-btn-primary mt-2">Create event</a>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive rd-table">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Event name</th>
+                        <th>Type</th>
+                        <th>Date</th>
+                        <th>Location</th>
+                        <th>Category</th>
+                        <th>Distance</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var ev in Model.Events.OrderByDescending(e => e.EventDate))
+                    {
+                        <tr>
+                            <td>
+                                <a asp-controller="Events" asp-action="Details" asp-route-id="@ev.EventID"
+                                   class="fw-semibold text-decoration-none text-dark">@ev.EventName</a>
+                            </td>
+                            <td>
+                                <span class="rd-event-type-badge rd-type-@ev.EventType.ToLower()">@ev.EventType</span>
+                            </td>
+                            <td class="text-nowrap">@ev.EventDate.ToString("dd MMM yyyy")</td>
+                            <td>@ev.Location</td>
+                            <td>@ev.CategoryName</td>
+                            <td>@ev.Distance km</td>
+                            <td class="text-nowrap">
+                                <a asp-action="Enrolments" asp-route-id="@ev.EventID"
+                                   class="btn btn-xs btn-outline-secondary btn-sm me-1" title="View enrolments">
+                                    <i class="bi bi-people"></i>
+                                </a>
+                                <a asp-controller="Results" asp-action="EventResults" asp-route-eventId="@ev.EventID"
+                                   class="btn btn-xs btn-outline-warning btn-sm me-1" title="Results">
+                                    <i class="bi bi-trophy"></i>
+                                </a>
+                                <a asp-action="Edit" asp-route-id="@ev.EventID"
+                                   class="btn btn-xs btn-outline-primary btn-sm me-1" title="Edit">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <form asp-action="Delete" method="post" class="d-inline"
+                                      onsubmit="return confirm('Delete @ev.EventName?')">
+                                    <input type="hidden" name="id" value="@ev.EventID" />
+                                    <button class="btn btn-xs btn-outline-danger btn-sm" title="Delete">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

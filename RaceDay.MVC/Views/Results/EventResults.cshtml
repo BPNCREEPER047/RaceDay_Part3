@@ -1,0 +1,119 @@
+@model List<ResultDto>
+@{
+    ViewData["Title"] = "Event Results";
+    var ev = ViewBag.Event as EventDto;
+    var enrolments = ViewBag.Enrolments as List<EnrolmentDto> ?? new();
+}
+
+<div class="container py-4">
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Events" asp-action="Dashboard">Dashboard</a></li>
+            <li class="breadcrumb-item active">Results — @ev?.EventName</li>
+        </ol>
+    </nav>
+
+    <div class="rd-section-header">
+        <div>
+            <h2>Results</h2>
+            <p class="text-muted mb-0">@ev?.EventName &mdash; @ev?.EventDate.ToString("dd MMM yyyy")</p>
+        </div>
+        <a asp-action="Capture" asp-route-eventId="@ev?.EventID" class="btn rd-btn-primary">
+            <i class="bi bi-plus me-1"></i>Capture result
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="rd-empty">
+            <i class="bi bi-trophy"></i>
+            <h4>No results yet</h4>
+            <p>Capture finish times for participants after the event concludes.</p>
+            <a asp-action="Capture" asp-route-eventId="@ev?.EventID" class="btn rd-btn-primary mt-2">
+                Capture first result
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive rd-table">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Position</th>
+                        <th>Participant</th>
+                        <th>Category</th>
+                        <th>Finish time</th>
+                        <th>Notes</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var r in Model.OrderBy(x => x.Position ?? 9999))
+                    {
+                        <tr>
+                            <td>
+                                <span class="fw-bold" style="font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;color:var(--rd-accent);">
+                                    @(r.Position.HasValue ? $"#{r.Position}" : "—")
+                                </span>
+                            </td>
+                            <td><strong>@r.ParticipantName</strong></td>
+                            <td>@r.CategoryName</td>
+                            <td class="fw-semibold">@r.FinishTime</td>
+                            <td class="text-muted small">@r.Notes</td>
+                            <td class="text-nowrap">
+                                <button class="btn btn-sm btn-outline-secondary me-1"
+                                        data-bs-toggle="modal" data-bs-target="#editModal-@r.ResultID">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <form asp-action="Delete" method="post" class="d-inline"
+                                      onsubmit="return confirm('Delete result for @r.ParticipantName?')">
+                                    <input type="hidden" name="id" value="@r.ResultID" />
+                                    <input type="hidden" name="eventId" value="@ev?.EventID" />
+                                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Edit modals -->
+        @foreach (var r in Model)
+        {
+            <div class="modal fade" id="editModal-@r.ResultID" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Edit result — @r.ParticipantName</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <form asp-action="Edit" method="post">
+                            <div class="modal-body">
+                                <input type="hidden" name="id" value="@r.ResultID" />
+                                <input type="hidden" name="eventId" value="@ev?.EventID" />
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Finish time</label>
+                                    <input type="text" name="finishTime" class="form-control" value="@r.FinishTime" placeholder="e.g. 1:23:45" required />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Position</label>
+                                    <input type="number" name="position" class="form-control" value="@r.Position" placeholder="e.g. 47" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Notes</label>
+                                    <input type="text" name="notes" class="form-control" value="@r.Notes" />
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn rd-btn-primary">Save</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>

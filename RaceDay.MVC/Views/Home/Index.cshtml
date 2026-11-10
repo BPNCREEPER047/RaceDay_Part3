@@ -1,0 +1,131 @@
+@model List<EventDto>
+@{ ViewData["Title"] = "Events"; }
+
+<!-- Hero -->
+<section class="rd-hero">
+    <div class="container position-relative">
+        <div class="row align-items-center">
+            <div class="col-lg-7">
+                <p class="text-uppercase fw-bold" style="color:var(--rd-accent);letter-spacing:.12em;font-size:.8rem;">South Africa's Race Platform</p>
+                <h1 class="rd-hero-title mb-3">
+                    Find your next<br><span class="accent">race day.</span>
+                </h1>
+                <p>Browse running, walking, and cycling events across South Africa. From 5km park runs to full marathons — your race is here.</p>
+                @if (ViewBag.IsLoggedIn != true)
+                {
+                    <div class="mt-4 d-flex gap-3 flex-wrap">
+                        <a asp-controller="Auth" asp-action="Register" class="btn rd-btn-primary btn-lg">
+                            <i class="bi bi-person-plus me-2"></i>Sign up free
+                        </a>
+                        <a asp-controller="Auth" asp-action="Login" class="btn btn-outline-light btn-lg">
+                            Log in
+                        </a>
+                    </div>
+                }
+            </div>
+            <div class="col-lg-5 text-center d-none d-lg-block">
+                <i class="bi bi-stopwatch-fill" style="font-size:9rem;color:rgba(230,57,70,0.2);"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Filter bar -->
+<div class="rd-filter-bar">
+    <div class="container">
+        <div class="row align-items-center g-2">
+            <div class="col-auto">
+                <a asp-action="Index" class="rd-filter-btn @(ViewBag.FilterType == null && ViewBag.Search == null ? "active" : "")">All</a>
+            </div>
+            <div class="col-auto">
+                <a asp-action="Index" asp-route-type="run" class="rd-filter-btn @(ViewBag.FilterType == "run" ? "active" : "")">
+                    <i class="bi bi-person-walking me-1"></i>Run
+                </a>
+            </div>
+            <div class="col-auto">
+                <a asp-action="Index" asp-route-type="cycle" class="rd-filter-btn @(ViewBag.FilterType == "cycle" ? "active" : "")">
+                    <i class="bi bi-bicycle me-1"></i>Cycle
+                </a>
+            </div>
+            <div class="col-auto">
+                <a asp-action="Index" asp-route-type="walk" class="rd-filter-btn @(ViewBag.FilterType == "walk" ? "active" : "")">
+                    <i class="bi bi-person me-1"></i>Walk
+                </a>
+            </div>
+            <div class="col ms-auto">
+                <form asp-action="Index" method="get" class="d-flex gap-2">
+                    @if (ViewBag.FilterType != null)
+                    {
+                        <input type="hidden" name="type" value="@ViewBag.FilterType" />
+                    }
+                    <input type="text" name="search" value="@ViewBag.Search"
+                           class="form-control form-control-sm" placeholder="Search events or locations…"
+                           style="max-width:260px;" />
+                    <button class="btn rd-btn-primary btn-sm" type="submit">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Events grid -->
+<div class="container py-5">
+    @if (!Model.Any())
+    {
+        <div class="rd-empty">
+            <i class="bi bi-calendar-x"></i>
+            <h4>No events found</h4>
+            <p>Try a different filter or check back soon.</p>
+            @if (ViewBag.IsLoggedIn == true && ViewBag.CurrentRole == "Organiser")
+            {
+                <a asp-controller="Events" asp-action="Create" class="btn rd-btn-primary mt-2">Create the first event</a>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var ev in Model)
+            {
+                <div class="col-sm-6 col-lg-4">
+                    <div class="rd-event-card">
+                        @if (!string.IsNullOrEmpty(ev.BannerImageUrl))
+                        {
+                            <img src="@ev.BannerImageUrl" class="rd-event-banner" alt="@ev.EventName" />
+                        }
+                        else
+                        {
+                            <div class="rd-event-banner-placeholder">
+                                <i class="bi bi-@(ev.EventType == "cycle" ? "bicycle" : ev.EventType == "walk" ? "person" : "person-walking")"></i>
+                            </div>
+                        }
+
+                        <div class="p-3">
+                            <div class="d-flex align-items-start justify-content-between mb-2">
+                                <span class="rd-event-type-badge rd-type-@ev.EventType.ToLower()">@ev.EventType</span>
+                                <span class="text-muted small">@ev.Distance km</span>
+                            </div>
+
+                            <h5 class="fw-bold mb-2" style="line-height:1.2;">@ev.EventName</h5>
+
+                            <div class="rd-event-meta mb-3">
+                                <div><i class="bi bi-calendar3"></i> @ev.EventDate.ToString("dd MMM yyyy")</div>
+                                <div><i class="bi bi-geo-alt"></i> @ev.Location</div>
+                                @if (!string.IsNullOrEmpty(ev.CategoryName))
+                                {
+                                    <div><i class="bi bi-tag"></i> @ev.CategoryName</div>
+                                }
+                            </div>
+
+                            <a asp-controller="Events" asp-action="Details" asp-route-id="@ev.EventID"
+                               class="btn btn-sm rd-btn-primary w-100">View event</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <p class="text-muted mt-4 small">Showing @Model.Count event@(Model.Count == 1 ? "" : "s")</p>
+    }
+</div>
